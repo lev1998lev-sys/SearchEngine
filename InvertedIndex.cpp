@@ -4,30 +4,6 @@
 #include <mutex>
 
 std::mutex commonData;
-/*
-std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word) {
-    std::stringstream cleanWord;
-    std::vector<Entry> infoAboutWord;
-    std::string tempWordByWord;
-    for (int i = 0; i < docs.size(); i++) {
-        cleanWord << docs[i];
-        while (!cleanWord.eof()) {
-            getline(cleanWord, tempWordByWord, ' ');
-            if (!tempWordByWord.empty() and tempWordByWord == word) {
-                try {
-                    if (infoAboutWord.at(i).doc_id == i) {
-                        infoAboutWord[i].count += 1;
-                    }
-                } catch (std::out_of_range& e) {
-                    infoAboutWord.push_back({size_t(i), 1});
-                }
-            }
-        }
-        cleanWord.clear();
-    }
-    return infoAboutWord;
-}
-*/
 
 std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word) {
     if (freq_dictionary.find(word) != freq_dictionary.end()) {

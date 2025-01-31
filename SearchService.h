@@ -4,32 +4,26 @@
 #include "InvertedIndex.h"
 #include <vector>
 #include <string>
+#include <map>
+
+#include "ConverterJSON.h"
 
 struct RelativeIndex{
     size_t doc_id;
     float rank;
+    explicit operator std::pair<int, float>() {
+        return std::make_pair(doc_id, rank);
+    }
 };
 
 class SearchServer {
 public:
-    /**
-    * @param idx в конструктор класса передаётся ссылка на класс
-    InvertedIndex,
-    *      чтобы SearchServer мог узнать частоту слов встречаемых в
-    запросе
-    */
-    SearchServer(InvertedIndex& idx) : _index(idx){ };
-    /**
-    * Метод обработки поисковых запросов
-    * @param queries_input поисковые запросы взятые из файла
-    requests.json
-    * @return возвращает отсортированный список релевантных ответов для
-    заданных запросов
-    */
+    SearchServer(InvertedIndex* idx, int inMaxResponseCount) : _index(idx), maxResponseCount(inMaxResponseCount) {};
+
     std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input);
-    std::vector<RelativeIndex> proccessRequest(const std::string& requestOfWords);
 private:
-    InvertedIndex _index;
+    InvertedIndex* _index;
+    int maxResponseCount;
 };
 
 

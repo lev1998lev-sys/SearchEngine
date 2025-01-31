@@ -65,7 +65,7 @@ std::vector<std::string> ConverterJSON::GetRequests() {
 void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers) {
     nlohmann::json answersJson;
     nlohmann::json tempRelevance;
-    for (int i = 0; i < answers.size(); i++) {
+    for (int i = 0; i < answers.capacity(); i++) {
         std::ostringstream os;
         os << std::setfill('0') << std::setw(3) << i + 1;
         std::string requestNumber = "request" + os.str();

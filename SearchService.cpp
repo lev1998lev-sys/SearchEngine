@@ -2,55 +2,62 @@
 #include <sstream>
 #include <unordered_set>
 
-std::vector<RelativeIndex> SearchServer::proccessRequest(const std::string& requestOfWords) {
-    std::vector<Entry> infoAboutWord;
-    std::vector<RelativeIndex> relativeIndexes;
-    std::stringstream cleanWord;
-    std::string currentWord;
-    float maxRank = 0.0;
-    std::unordered_set<std::string> listOfUniqueWords;
-    cleanWord << requestOfWords;
-    while (!cleanWord.eof()) {
-        std::getline(cleanWord, currentWord, ' ');
-        if (!currentWord.empty()) {
-            listOfUniqueWords.insert(currentWord);
+std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string> &queries_input) {
+    std::vector<std::vector<RelativeIndex>> resultOfSearchForSpecifiedRequests;
+    for (int i = 0; i < queries_input.size(); i++) {
+        std::stringstream cleanWord;
+        std::string currentWord;
+        std::vector<Entry> infoAboutWord;
+        std::vector<RelativeIndex> relativeIndexes;
+        float maxRank = 0.0;
+        std::unordered_set<std::string> listOfUniqueWords;
+        cleanWord << queries_input[i];
+        while (!cleanWord.eof()) {
+            std::getline(cleanWord, currentWord, ' ');
+            if (!currentWord.empty()) {
+                listOfUniqueWords.insert(currentWord);
+            }
         }
-    }
 
-    for (auto& word : listOfUniqueWords) {
-        infoAboutWord = _index.GetWordCount(word);
-        bool isDocIdInRelatives = false;
-        for (int i = 0; i < infoAboutWord.size(); i++) {
-            for (int j = 0; j < relativeIndexes.size(); j++) {
-                if (relativeIndexes[j].doc_id == infoAboutWord[i].doc_id) {
-                    relativeIndexes[j].rank += infoAboutWord[i].count;
+        for (auto& word : listOfUniqueWords) {
+            infoAboutWord = _index->GetWordCount(word);
+            bool isDocIdInRelatives = false;
+            for (int j = 0; j < infoAboutWord.size(); j++) {
+                for (int k = 0; k < relativeIndexes.size(); k++) {
+                    if (relativeIndexes[k].doc_id == infoAboutWord[j].doc_id) {
+                        relativeIndexes[k].rank += infoAboutWord[j].count;
+                        isDocIdInRelatives = true;
+                    }
+                    if (maxRank < relativeIndexes[k].rank) {
+                        maxRank = relativeIndexes[k].rank;
+                    }
+                }
+                if (!isDocIdInRelatives) {
+                    relativeIndexes.push_back({infoAboutWord[j].doc_id, static_cast<float>(infoAboutWord[j].count)});
                     if (maxRank < relativeIndexes[j].rank) {
                         maxRank = relativeIndexes[j].rank;
                     }
-                    isDocIdInRelatives = true;
-                    break;
+                    isDocIdInRelatives = false;
                 }
             }
-            if (!isDocIdInRelatives) {
-                relativeIndexes.push_back({infoAboutWord[i].doc_id, static_cast<float>(infoAboutWord[i].count)});
-                isDocIdInRelatives = false;
+        }
+
+        for (int j = 1; j < relativeIndexes.size(); j++) {
+            for (int i = 0; i < relativeIndexes.size() - j; i++) {
+                if (relativeIndexes[i].rank < relativeIndexes[i + 1].rank) {
+                    std::swap(relativeIndexes[i].rank, relativeIndexes[i + 1].rank);
+                }
             }
         }
-    }
 
-    for (int i = 0; i < relativeIndexes.size(); i++) {
-        relativeIndexes[i].rank /= maxRank;
-    }
-    return relativeIndexes;
-}
+        for (int j = 0; j < relativeIndexes.size(); j++) {
+            relativeIndexes[j].rank /= maxRank;
+        }
 
-std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string> &queries_input) {
-    std::vector<std::vector<RelativeIndex>> resultOfSearchForSpecifiedRequests;
-    std::vector<RelativeIndex> resultOfCountingForCurrentRequest;
-    std::stringstream cleanWord;
-    std::string currentWord;
-    for (int i = 0; i < queries_input.size(); i++) {
-        resultOfSearchForSpecifiedRequests.push_back(proccessRequest(queries_input[i]));
+        if (!relativeIndexes.empty() and relativeIndexes.size() > maxResponseCount) {
+            relativeIndexes.resize(maxResponseCount);
+        }
+        resultOfSearchForSpecifiedRequests.push_back(relativeIndexes);
     }
     return resultOfSearchForSpecifiedRequests;
 }
