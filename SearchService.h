@@ -4,15 +4,15 @@
 #include "InvertedIndex.h"
 #include <vector>
 #include <string>
-#include <map>
-
-#include "ConverterJSON.h"
 
 struct RelativeIndex{
     size_t doc_id;
     float rank;
     explicit operator std::pair<int, float>() {
         return std::make_pair(doc_id, rank);
+    }
+    bool operator ==(const RelativeIndex& other) const {
+        return (doc_id == other.doc_id && rank == other.rank);
     }
 };
 

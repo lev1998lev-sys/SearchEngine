@@ -45,7 +45,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         for (int j = 1; j < relativeIndexes.size(); j++) {
             for (int i = 0; i < relativeIndexes.size() - j; i++) {
                 if (relativeIndexes[i].rank < relativeIndexes[i + 1].rank) {
-                    std::swap(relativeIndexes[i].rank, relativeIndexes[i + 1].rank);
+                    std::swap(relativeIndexes[i], relativeIndexes[i + 1]);
                 }
             }
         }
