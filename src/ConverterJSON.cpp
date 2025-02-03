@@ -1,4 +1,4 @@
-#include "../ConverterJSON.h"
+#include "ConverterJSON.h"
 #include <fstream>
 #include <vector>
 #include <string>
@@ -51,6 +51,9 @@ int ConverterJSON::getResponsesLimit() const {
 
 std::vector<std::string> ConverterJSON::getRequests() const {
     std::ifstream readRequestFile("requests.json");
+    if (!readRequestFile.is_open()) {
+        return {};
+    }
     std::vector<std::string> requestsFromFile;
     nlohmann::json requestsFile;
     readRequestFile >> requestsFile;
@@ -65,6 +68,11 @@ std::vector<std::string> ConverterJSON::getRequests() const {
 void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>& inAnswers) {
     nlohmann::json answersJson;
     nlohmann::json tempRelevance;
+    if (inAnswers.empty()) {
+        std::ofstream outAnswersFile("answers.json");
+        answersJson = {};
+        outAnswersFile << answersJson;
+    }
     for (int i = 0; i < inAnswers.size(); i++) {
         std::stringstream formattedReqNumber;;
         std::stringstream formattedRank;

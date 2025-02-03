@@ -1,14 +1,14 @@
-#include <iostream>
-#include <../nlohmann_json/include/nlohmann/json.hpp>
-#include "../InvertedIndex.h"
-#include "../SearchService.h"
-#include <vector>
-#include <thread>
-#include "../cmake-build-debug/_deps/googletest-src/googletest/include/gtest/gtest.h"
-#include <cmath>
+// #include <iostream>
+// #include <nlohmann/json.hpp>
+// #include "InvertedIndex.h"
+#include "SearchService.h"
+// #include <vector>
+// #include <thread>
+// #include "gtest/gtest.h"
+// #include <cmath>
 
-using namespace std;
-
+// using namespace std;
+/*
 void TestInvertedIndexFunctionality(
 const vector<string>& docs,
 const vector<string>& requests,
@@ -39,7 +39,7 @@ TEST(TestCaseInvertedIndex, TestBasic) {
     };
     TestInvertedIndexFunctionality(docs, requests, expected);
 }
-/*
+
 TEST(TestCaseInvertedIndex, TestBasic2) {
     const vector<string> docs = {
         "milk milk milk milk water water water",
@@ -151,4 +151,5 @@ int main(int argc, char* argv[]) {
     searchService->proccessRequests();
     delete searchService;
     searchService = nullptr;
+    return 0;
 }

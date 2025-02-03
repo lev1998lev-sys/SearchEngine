@@ -21,5 +21,4 @@ public:
     std::vector<Entry> getWordCount(const std::string& word) const;
 };
 
-
 #endif

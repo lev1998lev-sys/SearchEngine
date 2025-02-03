@@ -4,7 +4,6 @@
 #include <nlohmann/json.hpp>
 #include "SearchService.h"
 
-
 class FieldConfigIsMissing : public std::exception {
 public:
     const char* what() const noexcept override;
@@ -23,6 +22,5 @@ public:
     std::vector<std::string> getRequests() const;
     void putAnswers(std::vector<std::vector<struct RelativeIndex>>& inAnswers);
 };
-
 
 #endif

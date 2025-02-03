@@ -1,3 +1,6 @@
 cmake-build-debug/
 nlohmann_json/
 .idea/
+src/answers.json
+src/config.json
+src/requests.json
