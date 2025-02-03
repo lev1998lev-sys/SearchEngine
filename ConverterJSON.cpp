@@ -72,14 +72,15 @@ void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> a
         os.seekp(0);
         if (answers[i].size() > 1) {
             answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", true));
-            for (int j = 0; j < answers[i].size(); j++) {
-                tempRelevance = nlohmann::json::object({{"docid", answers[i][j].first}, {"rank", answers[i][j].second}});
-                answersJson[requestNumber]["relevance"].push_back(tempRelevance);
+            int maxResponseToRequest = GetResponsesLimit();
+            answersJson[requestNumber]["relevance"] = nlohmann::json::object();
+            for (int j = 0; j < answers[i].size() and j < maxResponseToRequest; j++) {
+                std::string tempDocId = "docid_" + std::to_string(answers[i][j].first);
+                answersJson[requestNumber]["relevance"].push_back(nlohmann::json::object_t::value_type(tempDocId, answers[i][j].second));
             }
         } else if (answers[i].size() == 1) {
             answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", true));
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("docid", answers[i][0].first));
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("rank", answers[i][0].second));
+            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("docid_0", answers[i][0].second));
         } else {
             answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", false));
         }

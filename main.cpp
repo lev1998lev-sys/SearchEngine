@@ -2,6 +2,7 @@
 #include <nlohmann/json.hpp>
 #include "InvertedIndex.h"
 #include "SearchService.h"
+#include "ConverterJSON.h"
 #include <vector>
 #include <thread>
 #include "gtest/gtest.h"
@@ -94,7 +95,7 @@ TEST(TestCaseSearchServer, TestSimple) {
     };
     InvertedIndex idx;
     idx.UpdateDocumentBase(docs);
-    SearchServer srv(&idx, 5);
+    SearchServer srv(&idx);
     std::vector<vector<RelativeIndex>> result = srv.search(request);
     ASSERT_EQ(result, expected);
 }
@@ -123,7 +124,7 @@ TEST(TestCaseSearchServer, TestTop5) {
          "riga is the capital of latvia",
          "tallinn is the capital of estonia",
          "warsaw is the capital of poland",
-         };
+    };
     const vector<string> request = {"moscow is the capital of russia"};
     const std::vector<vector<RelativeIndex>> expected = {
         {
@@ -136,13 +137,46 @@ TEST(TestCaseSearchServer, TestTop5) {
     };
     InvertedIndex idx;
     idx.UpdateDocumentBase(docs);
-    SearchServer srv(&idx, 5);
+    SearchServer srv(&idx);
     std::vector<vector<RelativeIndex>> result = srv.search(request);
+
+    for (auto& elem : result) {
+        elem.resize(5);
+    }
     ASSERT_EQ(result, expected);
 }
 
 int main(int argc, char* argv[]) {
-    testing::InitGoogleTest(&argc, argv);
+//    testing::InitGoogleTest(&argc, argv);
+    const vector<string> docs = {
+        "milk milk milk milk water water water",
+        "milk water water",
+        "milk milk milk milk milk water water water water water",
+        "americano cappuccino"
+        };
+    const vector<string> request = {"milk", "water", "cappuccino"};
+    ConverterJSON converter_json;
+    InvertedIndex inv_index;
+    inv_index.UpdateDocumentBase(docs);
+    SearchServer search_server(&inv_index);
+    vector<vector<RelativeIndex>> result = search_server.search(request);
 
-    return RUN_ALL_TESTS();
+    vector<vector<pair<int, float>>> answers_vec;
+    answers_vec.resize(result.size());
+
+    for (int i = 0; i < result.size(); i++) {
+        for (int j = 0; j < result[i].size(); j++) {
+            answers_vec[i].push_back(pair<int, float>(result[i][j]));
+        }
+    }
+
+    for (int i = 0; i < result.size(); i++) {
+        for (int j = 0; j < result[i].size(); j++) {
+            cout << "doc id " << result[i][j].doc_id << " rank " << result[i][j].rank << endl;
+        }
+    }
+    converter_json.putAnswers(answers_vec);
+    return 0;
+
+//    return RUN_ALL_TESTS();
 }

@@ -54,9 +54,6 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             relativeIndexes[j].rank /= maxRank;
         }
 
-        if (!relativeIndexes.empty() and relativeIndexes.size() > maxResponseCount) {
-            relativeIndexes.resize(maxResponseCount);
-        }
         resultOfSearchForSpecifiedRequests.push_back(relativeIndexes);
     }
     return resultOfSearchForSpecifiedRequests;
