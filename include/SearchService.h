@@ -19,6 +19,7 @@ class SearchServer {
     class InvertedIndex* currentIndex;
 public:
     SearchServer();
+    SearchServer(const std::vector<std::string>& inDocuments);
     ~SearchServer();
     std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& inRequests) const;
     void proccessRequests() const;

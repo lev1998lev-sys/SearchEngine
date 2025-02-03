@@ -67,6 +67,14 @@ SearchServer::SearchServer() {
     currentIndex->updateDocumentBase(tempInputDocs);
 }
 
+SearchServer::SearchServer(const std::vector<std::string>& inDocuments) {
+    currentConverter = new ConverterJSON();
+    currentIndex = new InvertedIndex();
+    currentIndex->updateDocumentBase(inDocuments);
+}
+
+
+
 SearchServer::~SearchServer() {
     delete currentConverter;
     currentConverter = nullptr;
