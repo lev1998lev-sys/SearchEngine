@@ -1,24 +1,23 @@
-#include "InvertedIndex.h"
+#include "../InvertedIndex.h"
 #include <sstream>
 #include <thread>
 #include <mutex>
 
 std::mutex commonData;
 
-std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word) {
-    if (freq_dictionary.find(word) != freq_dictionary.end()) {
-        return freq_dictionary.at(word);
+std::vector<Entry> InvertedIndex::getWordCount(const std::string& word) const {
+    if (freqDictionary.find(word) != freqDictionary.end()) {
+        return freqDictionary.at(word);
     }
-    return {};
+    return std::initializer_list<Entry>();
 }
 
-void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
+void InvertedIndex::updateDocumentBase(const std::vector<std::string>& inDocuments) {
     std::string currentDoc;
     std::vector<std::thread> docsProccessing;
-    freq_dictionary.clear();
-    for (int i = 0; i < input_docs.size(); i++) {
-        docs.push_back(input_docs[i]);
-        currentDoc = input_docs[i];
+    freqDictionary.clear();
+    for (int i = 0; i < inDocuments.size(); i++) {
+        currentDoc = inDocuments[i];
         std::thread indexCurrentDoc([](std::string inDoc, InvertedIndex* inIndex, int indexOfDoc) {
             std::stringstream cleanWord;
             std::string tempWordByWord;
@@ -28,18 +27,18 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
                 std::getline(cleanWord, tempWordByWord, ' ');
                 commonData.lock();
                 if (!tempWordByWord.empty()) {
-                    if (inIndex->freq_dictionary.find(tempWordByWord) != inIndex->freq_dictionary.end()) {
-                        infoAboutCurrentWord = inIndex->freq_dictionary.at(tempWordByWord);
+                    if (inIndex->freqDictionary.find(tempWordByWord) != inIndex->freqDictionary.end()) {
+                        infoAboutCurrentWord = inIndex->freqDictionary.at(tempWordByWord);
                         try {
                             infoAboutCurrentWord.at(indexOfDoc).count += 1;
                         } catch (std::out_of_range& e) {
                             infoAboutCurrentWord.push_back({size_t(indexOfDoc), 1});
                         }
-                        inIndex->freq_dictionary.at(tempWordByWord) = infoAboutCurrentWord;
+                        inIndex->freqDictionary.at(tempWordByWord) = infoAboutCurrentWord;
                     } else {
                         infoAboutCurrentWord.clear();
                         infoAboutCurrentWord.push_back({size_t(indexOfDoc), 1});
-                        inIndex->freq_dictionary.insert(std::make_pair(tempWordByWord, infoAboutCurrentWord));
+                        inIndex->freqDictionary.insert(std::make_pair(tempWordByWord, infoAboutCurrentWord));
                     }
                 }
                 commonData.unlock();

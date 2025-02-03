@@ -2,6 +2,7 @@
 #define SEARCHSERVICE_H
 
 #include "InvertedIndex.h"
+#include "ConverterJSON.h"
 #include <vector>
 #include <string>
 
@@ -17,15 +18,13 @@ struct RelativeIndex{
 };
 
 class SearchServer {
+    class ConverterJSON* currentConverter;
+    class InvertedIndex* currentIndex;
 public:
-    SearchServer(InvertedIndex* idx) : _index(idx) {};
-
-    std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& queries_input);
-private:
-    InvertedIndex* _index;
-    int maxResponseCount;
+    SearchServer();
+    ~SearchServer();
+    std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& inRequests) const;
+    void proccessRequests() const;
 };
-
-
 
 #endif

@@ -14,13 +14,11 @@ struct Entry {
 };
 
 class InvertedIndex {
-private:
-    std::vector<std::string> docs;
-    std::map<std::string, std::vector<Entry>> freq_dictionary;
+    std::map<std::string, std::vector<Entry>> freqDictionary;
 public:
     InvertedIndex() = default;
-    void UpdateDocumentBase(std::vector<std::string> input_docs);
-    std::vector<Entry> GetWordCount(const std::string& word);
+    void updateDocumentBase(const std::vector<std::string>& inDocuments);
+    std::vector<Entry> getWordCount(const std::string& word) const;
 };
 
 

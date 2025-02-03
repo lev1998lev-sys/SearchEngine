@@ -1,17 +1,18 @@
 #include "SearchService.h"
 #include <sstream>
 #include <unordered_set>
+#include <vector>
 
-std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string> &queries_input) {
+std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string>& inRequests) const {
     std::vector<std::vector<RelativeIndex>> resultOfSearchForSpecifiedRequests;
-    for (int i = 0; i < queries_input.size(); i++) {
+    for (int i = 0; i < inRequests.size(); i++) {
         std::stringstream cleanWord;
         std::string currentWord;
         std::vector<Entry> infoAboutWord;
         std::vector<RelativeIndex> relativeIndexes;
         float maxRank = 0.0;
         std::unordered_set<std::string> listOfUniqueWords;
-        cleanWord << queries_input[i];
+        cleanWord << inRequests[i];
         while (!cleanWord.eof()) {
             std::getline(cleanWord, currentWord, ' ');
             if (!currentWord.empty()) {
@@ -20,7 +21,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         }
 
         for (auto& word : listOfUniqueWords) {
-            infoAboutWord = _index->GetWordCount(word);
+            infoAboutWord = currentIndex->getWordCount(word);
             bool isDocIdInRelatives = false;
             for (int j = 0; j < infoAboutWord.size(); j++) {
                 for (int k = 0; k < relativeIndexes.size(); k++) {
@@ -43,9 +44,9 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         }
 
         for (int j = 1; j < relativeIndexes.size(); j++) {
-            for (int i = 0; i < relativeIndexes.size() - j; i++) {
-                if (relativeIndexes[i].rank < relativeIndexes[i + 1].rank) {
-                    std::swap(relativeIndexes[i], relativeIndexes[i + 1]);
+            for (int k = 0; k < relativeIndexes.size() - k; k++) {
+                if (relativeIndexes[k].rank < relativeIndexes[k + 1].rank) {
+                    std::swap(relativeIndexes[k], relativeIndexes[k + 1]);
                 }
             }
         }
@@ -57,4 +58,24 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
         resultOfSearchForSpecifiedRequests.push_back(relativeIndexes);
     }
     return resultOfSearchForSpecifiedRequests;
+}
+
+SearchServer::SearchServer() {
+    currentConverter = new ConverterJSON();
+    currentIndex = new InvertedIndex();
+    std::vector<std::string> tempInputDocs = currentConverter->getTextDocuments();
+    currentIndex->updateDocumentBase(tempInputDocs);
+}
+
+SearchServer::~SearchServer() {
+    delete currentConverter;
+    currentConverter = nullptr;
+    delete currentIndex;
+    currentIndex = nullptr;
+}
+
+void SearchServer::proccessRequests() const {
+    std::vector<std::string> tempInRequests = currentConverter->getRequests();
+    std::vector<std::vector<RelativeIndex>> resultOfRequests = search(tempInRequests);
+    currentConverter->putAnswers(resultOfRequests);
 }
