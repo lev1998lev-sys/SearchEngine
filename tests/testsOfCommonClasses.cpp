@@ -139,6 +139,59 @@ TEST(TestCaseSearchServer, TestTop5) {
     ASSERT_EQ(result, expected);
 }
 
+TEST(TestCaseLimitWords, TestLimitRequests) {
+    std::string request = "milk water ball lake apple pen rain train equation vehicle bycicle car";
+    bool expected = false;
+
+    ConverterJSON* converter = new ConverterJSON();
+    bool result = converter->limitNumberOfWords(request, 1, 10, 0);
+    delete converter;
+    converter = nullptr;
+    ASSERT_EQ(result, expected);
+}
+
+TEST(TestCaseLimitWords, TestLimitRequests2) {
+    std::string request = " ";
+    bool expected = false;
+
+    ConverterJSON* converter = new ConverterJSON();
+    bool result = converter->limitNumberOfWords(request, 1, 10, 0);
+    delete converter;
+    converter = nullptr;
+    ASSERT_EQ(result, expected);
+}
+
+TEST(TestCaseLimitWords, TestLimitWordsInDoc) {
+    std::string request;
+    for (int i = 0; i < 1001; i++) {
+        std::string tempString = "string" + std::to_string(i) + " ";
+        request.append(tempString);
+    }
+    bool expected = false;
+
+    ConverterJSON* converter = new ConverterJSON();
+    bool result = converter->limitNumberOfWords(request, 0, 1000, 100);
+    delete converter;
+    converter = nullptr;
+    ASSERT_EQ(result, expected);
+}
+
+TEST(TestCaseLimitWords, TestLimitWordsInDoc2) {
+    std::string request;
+    char tempChar;
+    for (int i = 0; i < 101; i++) {
+        tempChar = 'a';
+        request.push_back(tempChar);
+    }
+    bool expected = false;
+
+    ConverterJSON* converter = new ConverterJSON();
+    bool result = converter->limitNumberOfWords(request, 0, 1000, 100);
+    delete converter;
+    converter = nullptr;
+    ASSERT_EQ(result, expected);
+}
+
 int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);

@@ -51,3 +51,7 @@ void InvertedIndex::updateDocumentBase(const std::vector<std::string>& inDocumen
         docsProccessing[i].join();
     }
 }
+
+bool InvertedIndex::isFreqDictEmpty() const {
+    return freqDictionary.empty();
+}

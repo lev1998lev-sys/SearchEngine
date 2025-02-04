@@ -4,6 +4,9 @@
 #include <vector>
 
 std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<std::string>& inRequests) const {
+    if (currentIndex->isFreqDictEmpty()) {
+        return std::initializer_list<std::vector<RelativeIndex>>({});
+    }
     std::vector<std::vector<RelativeIndex>> resultOfSearchForSpecifiedRequests;
     for (int i = 0; i < inRequests.size(); i++) {
         std::stringstream cleanWord;
@@ -64,7 +67,9 @@ SearchServer::SearchServer() {
     currentConverter = new ConverterJSON();
     currentIndex = new InvertedIndex();
     std::vector<std::string> tempInputDocs = currentConverter->getTextDocuments();
-    currentIndex->updateDocumentBase(tempInputDocs);
+    if (!tempInputDocs.empty()) {
+        currentIndex->updateDocumentBase(tempInputDocs);
+    }
 }
 
 SearchServer::SearchServer(const std::vector<std::string>& inDocuments) {
@@ -85,5 +90,7 @@ SearchServer::~SearchServer() {
 void SearchServer::proccessRequests() const {
     std::vector<std::string> tempInRequests = currentConverter->getRequests();
     std::vector<std::vector<RelativeIndex>> resultOfRequests = search(tempInRequests);
-    currentConverter->putAnswers(resultOfRequests);
+    if (!resultOfRequests.empty()) {
+        currentConverter->putAnswers(resultOfRequests);
+    }
 }

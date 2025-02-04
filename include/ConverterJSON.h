@@ -21,6 +21,7 @@ public:
     int getResponsesLimit() const;
     std::vector<std::string> getRequests() const;
     void putAnswers(std::vector<std::vector<struct RelativeIndex>>& inAnswers);
+    bool limitNumberOfWords(std::string& inSentence, int minAmountOfWords, int maxAmountOfWords, int amountOfSymbols) const;
 };
 
 #endif

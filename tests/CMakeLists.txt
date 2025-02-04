@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(tests)
+project(testsOfSearchEngine)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -9,7 +9,7 @@ set(MY_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(MY_SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 
 add_executable(${PROJECT_NAME}
-        test_inverted_index.cpp
+        testsOfCommonClasses.cpp
         ${MY_INCLUDE_DIR}/InvertedIndex.h
         ${MY_SRC_DIR}/InvertedIndex.cpp
         ${MY_INCLUDE_DIR}/ConverterJSON.h
