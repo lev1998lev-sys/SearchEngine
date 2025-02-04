@@ -37,16 +37,17 @@ For example.
 <br>
 <br>
 The directory with the program before its launch.
-<img src="https://github.com/user-attachments/assets/5ecce9f3-2516-418a-a98c-d12dce34ea87">
+<img src=https://github.com/user-attachments/assets/b7d3a1f5-6efe-4009-9145-8a4ac7bac4c7>
+
 Input data:
 
 <br>
-<br>
-<img src="https://github.com/user-attachments/assets/75b1ea8e-1f06-4e2f-95d9-97a914901ba4" alt="file config.json">
+<img src="https://github.com/user-attachments/assets/e4dbe8cb-a57c-487c-ac5f-7778ade04fc5">
+
 <pre>
 {
   "config": {
-      "name": "SearchEngine",
+      "name": "drifting searcher",
       "version": "1.0",
       "max_responses": 5
   },
@@ -81,12 +82,14 @@ The file "C:\\file004.txt" contains the string "americano cappuccino"
 </pre>
 </dev>
 <br>
-To run the program, open the terminal and go to the folder where the program is located. Then enter the "SearchEngine" command. After that, a file with answers to the queries "answers.json". If the file was generated earlier, the contents will be overwritten.
-<img src=https://github.com/user-attachments/assets/e54ab067-ca2c-4bc8-9368-13b182b9c984>
+To run the program, open the terminal and go to the folder where the program is located. Then enter the "Starting" command. the terminal will display the label that is specified in the "name" field in the file config.json. After that, a file with answers to the queries "answers.json". If the file was generated earlier, the contents will be overwritten.
+<img src=https://github.com/user-attachments/assets/cf338cb8-a1a7-4a34-8f51-2f508c40214f>
 
 <br>
+<br>
 The directory with the program after its launch.
-<img src="https://github.com/user-attachments/assets/b019f574-dde6-4c79-9d67-c3262cbb105a">
+<img src=https://github.com/user-attachments/assets/b85d53c2-9e6f-4acc-8691-924ba791bb28>
+
 
 Output data:
 <br>
