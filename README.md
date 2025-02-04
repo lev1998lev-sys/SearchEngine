@@ -29,6 +29,7 @@ If several documents were found for the query, then the "relevance" field is cre
 </dev>
 <h2>Demo</h2>
 The search engine accepts 2 json files as input. The first file (the project cannot be started without it) it's called config.json. The second file requests.json contains a list of queries, which consists of a set of strings. At the output, the search engine generates the file answers.json containing the responses to each of the requests.
+
 <dev>
 <br>
 <br>
@@ -39,6 +40,7 @@ Input data:
 <br>
 <br>
 config.json
+![config_json](https://github.com/user-attachments/assets/75b1ea8e-1f06-4e2f-95d9-97a914901ba4)
 <pre>
 {
   "config": {
@@ -55,12 +57,24 @@ config.json
 }
 </pre>
 <br>
+![files](https://github.com/user-attachments/assets/308da529-d877-421c-ae5b-077a7dab3b18)
+The file "C:\\file001.txt" contains the string "milk milk milk milk water water water"
+<br>
+The file "C:\\file002.txt" contains the string "milk water water"
+<br>
+The file "C:\\file003.txt" contains the string "milk milk milk milk milk water water water water water"
+<br>
+The file "C:\\file004.txt" contains the string "americano cappuccino"
+<br>
+<br>
 requests.json
+![requests_json](https://github.com/user-attachments/assets/4ac16431-f968-444c-bc5d-5c72611d73c2)
 <pre>
 {
   "requests": [
     "milk water", 
-    "sugar"
+    "sugar",
+    "cappuccino"
   ]
 }
 </pre>
@@ -72,21 +86,25 @@ Output data:
 The file has been generated answers.json with responses to requests.
 <pre>
 {
-  "request001": {
-    "relevance": {
-      "docid_0": 0.7,
-      "docid_1": 0.3,
-      "docid_2": 1
+    "request001": {
+        "relevance": {
+            "docid_0": 0.7,
+            "docid_1": 0.3,
+            "docid_2": 1.0
+        },
+        "result": true
     },
-    "result": true
-  },
-  "request002": {
-    "result": false
-  }
+    "request002": {
+        "result": false
+    },
+    "request003": {
+        "docid_0": 1.0,
+        "result": true
+    }
 }
 </pre>
 <br>
-This means that the words from the first query were found in documents with identifiers docid_0, docid_1, docid_2. For the second query, no words were found in the documents, so the field "result" has the meaning of "false".
+This means that the words from the first query were found in documents with identifiers 0, 1 and 2. The "relevance" field was created, in which the fields "docid_0", "docid_1", "docid_2" were placed. For the second query, no words were found in the documents, so the field "result" has the meaning of "false". For the third query, the word was found in only one document.
 <h2>The technologies in the project</h2>
 The project is written in C++14. The CMake project build system was used. The following third-party libraries are used: the library of the author nlohmann for working with json and the library from Google - googletests.
 <h2>Architecture features</h2>
