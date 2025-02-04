@@ -40,7 +40,7 @@ Input data:
 <br>
 <br>
 config.json
-![config_json](https://github.com/user-attachments/assets/75b1ea8e-1f06-4e2f-95d9-97a914901ba4)
+![ScreenShot](https://github.com/user-attachments/assets/75b1ea8e-1f06-4e2f-95d9-97a914901ba4)
 <pre>
 {
   "config": {
