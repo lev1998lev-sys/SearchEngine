@@ -36,11 +36,13 @@ The search engine accepts 2 json files as input. The first file (the project can
 For example.
 <br>
 <br>
+The directory with the program before its launch.
+<img src="https://github.com/user-attachments/assets/5ecce9f3-2516-418a-a98c-d12dce34ea87">
 Input data:
+
 <br>
 <br>
-config.json
-![ScreenShot](https://github.com/user-attachments/assets/75b1ea8e-1f06-4e2f-95d9-97a914901ba4)
+<img src="https://github.com/user-attachments/assets/75b1ea8e-1f06-4e2f-95d9-97a914901ba4" alt="file config.json">
 <pre>
 {
   "config": {
@@ -57,7 +59,7 @@ config.json
 }
 </pre>
 <br>
-![files](https://github.com/user-attachments/assets/308da529-d877-421c-ae5b-077a7dab3b18)
+<img src="https://github.com/user-attachments/assets/308da529-d877-421c-ae5b-077a7dab3b18" alt="files">
 The file "C:\\file001.txt" contains the string "milk milk milk milk water water water"
 <br>
 The file "C:\\file002.txt" contains the string "milk water water"
@@ -67,8 +69,7 @@ The file "C:\\file003.txt" contains the string "milk milk milk milk milk water w
 The file "C:\\file004.txt" contains the string "americano cappuccino"
 <br>
 <br>
-requests.json
-![requests_json](https://github.com/user-attachments/assets/4ac16431-f968-444c-bc5d-5c72611d73c2)
+<img src="https://github.com/user-attachments/assets/4ac16431-f968-444c-bc5d-5c72611d73c2" alt="file requests.json">
 <pre>
 {
   "requests": [
@@ -80,10 +81,18 @@ requests.json
 </pre>
 </dev>
 <br>
+To run the program, open the terminal and go to the folder where the program is located. Then enter the "SearchEngine" command. After that, a file with answers to the queries "answers.json". If the file was generated earlier, the contents will be overwritten.
+<img src=https://github.com/user-attachments/assets/e54ab067-ca2c-4bc8-9368-13b182b9c984>
+
+<br>
+The directory with the program after its launch.
+<img src="https://github.com/user-attachments/assets/b019f574-dde6-4c79-9d67-c3262cbb105a">
+
 Output data:
 <br>
 <br>
 The file has been generated answers.json with responses to requests.
+<img src="https://github.com/user-attachments/assets/796d3d8a-4571-4a02-80eb-7012465a7d82" alt="file answers.json">
 <pre>
 {
     "request001": {
