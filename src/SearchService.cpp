@@ -7,7 +7,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
     if (currentIndex->isFreqDictEmpty()) {
         return std::initializer_list<std::vector<RelativeIndex>>({});
     }
-    std::vector<std::vector<RelativeIndex>> resultOfSearchForSpecifiedRequests;
+    std::vector<std::vector<RelativeIndex>> resultOfSearch;
     for (int i = 0; i < inRequests.size(); i++) {
         std::stringstream cleanWord;
         std::string currentWord;
@@ -58,9 +58,9 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
             relativeIndexes[j].rank /= maxRank;
         }
 
-        resultOfSearchForSpecifiedRequests.push_back(relativeIndexes);
+        resultOfSearch.push_back(relativeIndexes);
     }
-    return resultOfSearchForSpecifiedRequests;
+    return resultOfSearch;
 }
 
 SearchServer::SearchServer() {
