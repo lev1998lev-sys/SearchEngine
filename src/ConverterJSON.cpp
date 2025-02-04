@@ -13,7 +13,7 @@ const char* ConfigurationFileIsMissing::what() const noexcept {
     return "config file is missing";
 }
 
-std::vector<std::string> ConverterJSON::GetTextDocuments() {
+std::vector<std::string> ConverterJSON::getTextDocuments() const {
     std::ifstream readConfigFile("config.json");
     std::vector<std::string> textsFromFiles;
     nlohmann::json configFile;
@@ -37,7 +37,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     return textsFromFiles;
 }
 
-int ConverterJSON::GetResponsesLimit() {
+int ConverterJSON::getResponsesLimit() const {
     std::ifstream readConfigFile("config.json");
     nlohmann::json configFile;
     readConfigFile >> configFile;
@@ -49,8 +49,11 @@ int ConverterJSON::GetResponsesLimit() {
     return maxResponses;
 }
 
-std::vector<std::string> ConverterJSON::GetRequests() {
+std::vector<std::string> ConverterJSON::getRequests() const {
     std::ifstream readRequestFile("requests.json");
+    if (!readRequestFile.is_open()) {
+        return {};
+    }
     std::vector<std::string> requestsFromFile;
     nlohmann::json requestsFile;
     readRequestFile >> requestsFile;
@@ -62,25 +65,34 @@ std::vector<std::string> ConverterJSON::GetRequests() {
     return requestsFromFile;
 }
 
-void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers) {
+void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>& inAnswers) {
     nlohmann::json answersJson;
     nlohmann::json tempRelevance;
-    for (int i = 0; i < answers.size(); i++) {
-        std::ostringstream os;
-        os << std::setfill('0') << std::setw(3) << i + 1;
-        std::string requestNumber = "request" + os.str();
-        os.seekp(0);
-        if (answers[i].size() > 1) {
+    if (inAnswers.empty()) {
+        std::ofstream outAnswersFile("answers.json");
+        answersJson = {};
+        outAnswersFile << answersJson;
+    }
+    for (int i = 0; i < inAnswers.size(); i++) {
+        std::stringstream formattedReqNumber;;
+        std::stringstream formattedRank;
+        formattedReqNumber << std::setfill('0') << std::setw(3) << i + 1;
+        std::string requestNumber = "request" + formattedReqNumber.str();
+        if (inAnswers[i].size() > 1) {
             answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", true));
-            int maxResponseToRequest = GetResponsesLimit();
+            int maxResponseToRequest = getResponsesLimit();
             answersJson[requestNumber]["relevance"] = nlohmann::json::object();
-            for (int j = 0; j < answers[i].size() and j < maxResponseToRequest; j++) {
-                std::string tempDocId = "docid_" + std::to_string(answers[i][j].first);
-                answersJson[requestNumber]["relevance"].push_back(nlohmann::json::object_t::value_type(tempDocId, answers[i][j].second));
+            for (int j = 0; j < inAnswers[i].size() and j < maxResponseToRequest; j++) {
+                formattedRank << std::setprecision(4) << std::fixed << inAnswers[i][j].rank;
+                std::string tempDocId = "docid_" + std::to_string(inAnswers[i][j].doc_id);
+                answersJson[requestNumber]["relevance"].push_back(nlohmann::json::object_t::value_type(tempDocId, std::stod(formattedRank.str())));
+                formattedRank.seekp(0);
             }
-        } else if (answers[i].size() == 1) {
+        } else if (inAnswers[i].size() == 1) {
+            formattedRank << std::setprecision(4) << std::fixed << inAnswers[i][0].rank;
             answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", true));
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("docid_0", answers[i][0].second));
+            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("docid_0", std::stod(formattedRank.str())));
+            formattedRank.seekp(0);
         } else {
             answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", false));
         }

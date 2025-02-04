@@ -1,55 +1,49 @@
-#include <iostream>
-#include <nlohmann/json.hpp>
+#include <gtest/gtest.h>
 #include "InvertedIndex.h"
 #include "SearchService.h"
 #include "ConverterJSON.h"
-#include <vector>
-#include <thread>
-#include "gtest/gtest.h"
-#include <cmath>
 
-using namespace std;
 
 void TestInvertedIndexFunctionality(
-const vector<string>& docs,
-const vector<string>& requests,
-const std::vector<vector<Entry>>& expected
+const std::vector<std::string>& docs,
+const std::vector<std::string>& requests,
+const std::vector<std::vector<Entry>>& expected
 ) {
     std::vector<std::vector<Entry>> result;
     InvertedIndex idx;
-    idx.UpdateDocumentBase(docs);
+    idx.updateDocumentBase(docs);
     for(auto& request : requests) {
-        std::vector<Entry> word_count = idx.GetWordCount(request);
+        std::vector<Entry> word_count = idx.getWordCount(request);
         result.push_back(word_count);
     }
     ASSERT_EQ(result, expected);
 }
 
 TEST(TestCaseInvertedIndex, TestBasic) {
-    const vector<string> docs = {
+    const std::vector<std::string> docs = {
         "london is the capital of great britain",
         "big ben is the nickname for the Great bell of the striking clock"
         };
-    const vector<string> requests = {"london", "the"};
-    const vector<vector<Entry>> expected = {
+    const std::vector<std::string> requests = {"london", "the"};
+    const std::vector<std::vector<Entry>> expected = {
         {
             {0, 1}
         }, {
      {0, 1}, {1, 3}
         }
     };
-    TestInvertedIndexFunctionality(docs, requests, expected);
+        TestInvertedIndexFunctionality(docs, requests, expected);
 }
 
 TEST(TestCaseInvertedIndex, TestBasic2) {
-    const vector<string> docs = {
+    const std::vector<std::string> docs = {
         "milk milk milk milk water water water",
         "milk water water",
         "milk milk milk milk milk water water water water water",
         "americano cappuccino"
         };
-    const vector<string> requests = {"milk", "water", "cappuccino"};
-    const vector<vector<Entry>> expected = {
+    const std::vector<std::string> requests = {"milk", "water", "cappuccino"};
+    const std::vector<std::vector<Entry>> expected = {
         {
             {0, 4}, {1, 1}, {2, 5}
         }, {
@@ -62,12 +56,12 @@ TEST(TestCaseInvertedIndex, TestBasic2) {
 }
 
 TEST(TestCaseInvertedIndex, TestInvertedIndexMissingWord) {
-    const vector<string> docs = {
+    const std::vector<std::string> docs = {
         "a  b  c  d  e  f  g  h  i  j  k  l",
         "statement"
         };
-    const vector<string> requests = {"m", "statement"};
-    const vector<vector<Entry>> expected = {
+    const std::vector<std::string> requests = {"m", "statement"};
+    const std::vector<std::vector<Entry>> expected = {
         {
         }, {
      {1, 1}
@@ -77,14 +71,14 @@ TEST(TestCaseInvertedIndex, TestInvertedIndexMissingWord) {
 }
 
 TEST(TestCaseSearchServer, TestSimple) {
-    const vector<string> docs = {
+    const std::vector<std::string> docs = {
         "milk milk milk milk water water water",
         "milk water water",
         "milk milk milk milk milk water water water water water",
         "americano cappuccino"
         };
-    const vector<string> request = {"milk water", "sugar"};
-    const std::vector<vector<RelativeIndex>> expected = {
+    const std::vector<std::string> request = {"milk water", "sugar"};
+    const std::vector<std::vector<RelativeIndex>> expected = {
         {
             {2, 1},
             {0, 0.7},
@@ -93,15 +87,16 @@ TEST(TestCaseSearchServer, TestSimple) {
         {
         }
     };
-    InvertedIndex idx;
-    idx.UpdateDocumentBase(docs);
-    SearchServer srv(&idx);
-    std::vector<vector<RelativeIndex>> result = srv.search(request);
+
+    SearchServer* srv = new SearchServer(docs);
+    std::vector<std::vector<RelativeIndex>> result = srv->search(request);
+    delete srv;
+    srv = nullptr;
     ASSERT_EQ(result, expected);
 }
 
 TEST(TestCaseSearchServer, TestTop5) {
-    const vector<string> docs = {
+    const std::vector<std::string> docs = {
         "london is the capital of great britain",
         "paris is the capital of france",
         "berlin is the capital of germany",
@@ -124,9 +119,9 @@ TEST(TestCaseSearchServer, TestTop5) {
          "riga is the capital of latvia",
          "tallinn is the capital of estonia",
          "warsaw is the capital of poland",
-    };
-    const vector<string> request = {"moscow is the capital of russia"};
-    const std::vector<vector<RelativeIndex>> expected = {
+ };
+    const std::vector<std::string> request = {"moscow is the capital of russia"};
+    const std::vector<std::vector<RelativeIndex>> expected = {
         {
             {7, 1},
             {14, 1},
@@ -135,48 +130,18 @@ TEST(TestCaseSearchServer, TestTop5) {
             {2, 0.666666687}
         }
     };
-    InvertedIndex idx;
-    idx.UpdateDocumentBase(docs);
-    SearchServer srv(&idx);
-    std::vector<vector<RelativeIndex>> result = srv.search(request);
 
-    for (auto& elem : result) {
-        elem.resize(5);
-    }
+    SearchServer* srv = new SearchServer(docs);
+    std::vector<std::vector<RelativeIndex>> result = srv->search(request);
+    result[0].resize(5);
+    delete srv;
+    srv = nullptr;
     ASSERT_EQ(result, expected);
 }
 
-int main(int argc, char* argv[]) {
-//    testing::InitGoogleTest(&argc, argv);
-    const vector<string> docs = {
-        "milk milk milk milk water water water",
-        "milk water water",
-        "milk milk milk milk milk water water water water water",
-        "americano cappuccino"
-        };
-    const vector<string> request = {"milk", "water", "cappuccino"};
-    ConverterJSON converter_json;
-    InvertedIndex inv_index;
-    inv_index.UpdateDocumentBase(docs);
-    SearchServer search_server(&inv_index);
-    vector<vector<RelativeIndex>> result = search_server.search(request);
+int main(int argc, char** argv)
+{
+    testing::InitGoogleTest(&argc, argv);
 
-    vector<vector<pair<int, float>>> answers_vec;
-    answers_vec.resize(result.size());
-
-    for (int i = 0; i < result.size(); i++) {
-        for (int j = 0; j < result[i].size(); j++) {
-            answers_vec[i].push_back(pair<int, float>(result[i][j]));
-        }
-    }
-
-    for (int i = 0; i < result.size(); i++) {
-        for (int j = 0; j < result[i].size(); j++) {
-            cout << "doc id " << result[i][j].doc_id << " rank " << result[i][j].rank << endl;
-        }
-    }
-    converter_json.putAnswers(answers_vec);
-    return 0;
-
-//    return RUN_ALL_TESTS();
+    return RUN_ALL_TESTS();
 }

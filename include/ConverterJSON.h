@@ -2,6 +2,7 @@
 #define CONVERTERJSON_H
 
 #include <nlohmann/json.hpp>
+#include "SearchService.h"
 
 class FieldConfigIsMissing : public std::exception {
 public:
@@ -16,11 +17,10 @@ public:
 class ConverterJSON {
 public:
     ConverterJSON() = default;
-    std::vector<std::string> GetTextDocuments();
-    int GetResponsesLimit();
-    std::vector<std::string> GetRequests();
-    void putAnswers(std::vector<std::vector<std::pair<int, float>>> answers);
+    std::vector<std::string> getTextDocuments() const;
+    int getResponsesLimit() const;
+    std::vector<std::string> getRequests() const;
+    void putAnswers(std::vector<std::vector<struct RelativeIndex>>& inAnswers);
 };
-
 
 #endif
