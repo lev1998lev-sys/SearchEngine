@@ -19,6 +19,7 @@ public:
     InvertedIndex() = default;
     void updateDocumentBase(const std::vector<std::string>& inDocuments);
     std::vector<Entry> getWordCount(const std::string& word) const;
+    bool isFreqDictEmpty() const;
 };
 
 #endif

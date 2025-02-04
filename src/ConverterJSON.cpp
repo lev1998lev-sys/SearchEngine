@@ -32,6 +32,9 @@ std::vector<std::string> ConverterJSON::getTextDocuments() const {
         if (readConfigFile.is_open()) {
             std::getline(readConfigFile, textsFromFiles[i], '\0');
         }
+        if (!limitNumberOfWords(textsFromFiles[i], 0, 1000, 100)) {
+            return {};
+        }
         readConfigFile.close();
     }
     return textsFromFiles;
@@ -52,7 +55,7 @@ int ConverterJSON::getResponsesLimit() const {
 std::vector<std::string> ConverterJSON::getRequests() const {
     std::ifstream readRequestFile("requests.json");
     if (!readRequestFile.is_open()) {
-        return {};
+        return std::initializer_list<std::string>({});
     }
     std::vector<std::string> requestsFromFile;
     nlohmann::json requestsFile;
@@ -61,6 +64,9 @@ std::vector<std::string> ConverterJSON::getRequests() const {
     nlohmann::json requestsFromReqFile = requestsFile.at("requests");
     for (int i = 0; i < requestsFromReqFile.size(); i++) {
         requestsFromFile.push_back(requestsFromReqFile.at(i));
+        if (!limitNumberOfWords(requestsFromFile.back(), 1, 10, 0)) {
+            return {};
+        }
     }
     return requestsFromFile;
 }
@@ -68,11 +74,6 @@ std::vector<std::string> ConverterJSON::getRequests() const {
 void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>& inAnswers) {
     nlohmann::json answersJson;
     nlohmann::json tempRelevance;
-    if (inAnswers.empty()) {
-        std::ofstream outAnswersFile("answers.json");
-        answersJson = {};
-        outAnswersFile << answersJson;
-    }
     for (int i = 0; i < inAnswers.size(); i++) {
         std::stringstream formattedReqNumber;;
         std::stringstream formattedRank;
@@ -100,4 +101,26 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>& inAnswer
     std::ofstream outAnswersFile("answers.json");
     outAnswersFile << answersJson;
     outAnswersFile.close();
+}
+
+bool ConverterJSON::limitNumberOfWords(std::string& inSentence, int minAmountOfWords, int maxAmountOfWords, int amountOfSymbols) const {
+    std::stringstream cleanWord;
+    std::string tempCurrentWord;
+    int tempAmountOfWords = 0;
+    cleanWord << inSentence;
+    while (!cleanWord.eof()) {
+        std::getline(cleanWord, tempCurrentWord, ' ');
+        if (amountOfSymbols > 0) {
+            if (tempCurrentWord.length() > amountOfSymbols) {
+                return false;
+            }
+        }
+        if (!tempCurrentWord.empty()) {
+            tempAmountOfWords += 1;
+        }
+    }
+    if (tempAmountOfWords < minAmountOfWords or tempAmountOfWords > maxAmountOfWords) {
+        return false;
+    }
+    return true;
 }
