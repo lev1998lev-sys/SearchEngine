@@ -88,6 +88,7 @@ SearchServer::~SearchServer() {
 }
 
 void SearchServer::proccessRequests() const {
+    std::cout << currentConverter->getAppName();
     std::vector<std::string> tempInRequests = currentConverter->getRequests();
     std::vector<std::vector<RelativeIndex>> resultOfRequests = search(tempInRequests);
     if (!resultOfRequests.empty()) {

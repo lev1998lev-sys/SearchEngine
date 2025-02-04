@@ -43,12 +43,15 @@ std::vector<std::string> ConverterJSON::getTextDocuments() const {
 int ConverterJSON::getResponsesLimit() const {
     std::ifstream readConfigFile("config.json");
     nlohmann::json configFile;
+    if (!readConfigFile.is_open()) {
+        throw ConfigurationFileIsMissing();
+    }
     readConfigFile >> configFile;
     readConfigFile.close();
     if (!configFile.at("config").contains("max_responses")) {
         return 5;
     }
-    auto maxResponses = configFile.at("config").at("max_responses");
+    int maxResponses = configFile.at("config").at("max_responses");
     return maxResponses;
 }
 
@@ -72,30 +75,29 @@ std::vector<std::string> ConverterJSON::getRequests() const {
 }
 
 void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>& inAnswers) {
-    nlohmann::json answersJson;
-    nlohmann::json tempRelevance;
+    nlohmann::ordered_json answersJson;
     for (int i = 0; i < inAnswers.size(); i++) {
         std::stringstream formattedReqNumber;;
         std::stringstream formattedRank;
         formattedReqNumber << std::setfill('0') << std::setw(3) << i + 1;
         std::string requestNumber = "request" + formattedReqNumber.str();
         if (inAnswers[i].size() > 1) {
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", true));
+            answersJson[requestNumber].push_back(nlohmann::ordered_json::object_t::value_type("result", true));
             int maxResponseToRequest = getResponsesLimit();
             answersJson[requestNumber]["relevance"] = nlohmann::json::object();
             for (int j = 0; j < inAnswers[i].size() and j < maxResponseToRequest; j++) {
                 formattedRank << std::setprecision(4) << std::fixed << inAnswers[i][j].rank;
                 std::string tempDocId = "docid_" + std::to_string(inAnswers[i][j].doc_id);
-                answersJson[requestNumber]["relevance"].push_back(nlohmann::json::object_t::value_type(tempDocId, std::stod(formattedRank.str())));
+                answersJson[requestNumber]["relevance"].push_back(nlohmann::ordered_json::object_t::value_type(tempDocId, std::stod(formattedRank.str())));
                 formattedRank.seekp(0);
             }
         } else if (inAnswers[i].size() == 1) {
             formattedRank << std::setprecision(4) << std::fixed << inAnswers[i][0].rank;
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", true));
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("docid_0", std::stod(formattedRank.str())));
+            answersJson[requestNumber].push_back(nlohmann::ordered_json::object_t::value_type("result", true));
+            answersJson[requestNumber].push_back(nlohmann::ordered_json::object_t::value_type("docid_0", std::stod(formattedRank.str())));
             formattedRank.seekp(0);
         } else {
-            answersJson[requestNumber].push_back(nlohmann::json::object_t::value_type("result", false));
+            answersJson[requestNumber].push_back(nlohmann::ordered_json::object_t::value_type("result", false));
         }
     }
     std::ofstream outAnswersFile("answers.json");
@@ -123,4 +125,19 @@ bool ConverterJSON::limitNumberOfWords(std::string& inSentence, int minAmountOfW
         return false;
     }
     return true;
+}
+
+std::string ConverterJSON::getAppName() const {
+    std::ifstream readConfigFile("config.json");
+    nlohmann::json configFile;
+    std::string tempAppName;
+    if (!readConfigFile.is_open()) {
+        throw ConfigurationFileIsMissing();
+    }
+    readConfigFile >> configFile;
+    readConfigFile.close();
+    if (configFile.at("config").contains("name")) {
+        tempAppName = configFile.at("config").at("name");
+    }
+    return tempAppName;
 }
