@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 
+
 struct RelativeIndex{
     size_t doc_id;
     float rank;
@@ -15,12 +16,11 @@ struct RelativeIndex{
 };
 
 class SearchServer {
-    class ConverterJSON* currentConverter;
-    class InvertedIndex* currentIndex;
+    std::unique_ptr<class ConverterJSON> currentConverter;
+    std::unique_ptr<class InvertedIndex> currentIndex;
 public:
     SearchServer();
     SearchServer(const std::vector<std::string>& inDocuments);
-    ~SearchServer();
     std::vector<std::vector<RelativeIndex>> search(const std::vector<std::string>& inRequests) const;
     void proccessRequests() const;
 };

@@ -126,6 +126,9 @@ The program does not search for words directly in each file, but uses a data str
 In order to build and run a project in the IDE, you need to copy this repository using standard git commands (git clone, etc.). Open the project in any IDE and configure the connection of the nlohmann json library in accordance with the instructions provided on <a href="https://github.com/nlohmann/json?ysclid=m6qb5f5krf698243886">the library page on github</a>.
 Then, in the src directory with the file main.cpp create file config.json and requests.json in the format shown in the demo example 
 and launch the project. 
-as a result, the file answers.json will appear in the src directory, which contains responses to all requests from the file requests.json.
+As a result, the file answers.json will appear in the src directory, which contains responses to all requests from the file requests.json.
+<br>
+The files_for_test directory is nested in the src folder. It contains test text files with which you can test the application. In order for the files to be opened successfully by the application, you need to make sure that in the file config.json indicates the correct paths. The paths can be set relative, but for this you need to set the current application directory in the IDE settings
+(or just make sure that the relative paths are correctly spelled out relative to the current working directory of the project).
 <h3>For users</h3>
 To start the search engine, the first step is to add the paths to the libraries libwinpthread-1.dll , libstdc++-6.dll , libgcc_s_seh-1.dll in the system variable Path. Then, in the directory with the executable file Starting.exe create files config.json and requests.json in accordance with the format shown in the demo example. To run the program, open the terminal and go to the directory with the program and files config.json and requests.json. Enter the "Starting" command. As a result, a file will be generated in the same directory, which contains responses to all requests from the file requests.json.

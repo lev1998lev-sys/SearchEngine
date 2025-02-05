@@ -64,8 +64,8 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
 }
 
 SearchServer::SearchServer() {
-    currentConverter = new ConverterJSON();
-    currentIndex = new InvertedIndex();
+    currentConverter = std::make_unique<ConverterJSON>();
+    currentIndex = std::make_unique<InvertedIndex>();
     std::vector<std::string> tempInputDocs = currentConverter->getTextDocuments();
     if (!tempInputDocs.empty()) {
         currentIndex->updateDocumentBase(tempInputDocs);
@@ -73,18 +73,9 @@ SearchServer::SearchServer() {
 }
 
 SearchServer::SearchServer(const std::vector<std::string>& inDocuments) {
-    currentConverter = new ConverterJSON();
-    currentIndex = new InvertedIndex();
+    currentConverter = std::make_unique<ConverterJSON>();
+    currentIndex = std::make_unique<InvertedIndex>();
     currentIndex->updateDocumentBase(inDocuments);
-}
-
-
-
-SearchServer::~SearchServer() {
-    delete currentConverter;
-    currentConverter = nullptr;
-    delete currentIndex;
-    currentIndex = nullptr;
 }
 
 void SearchServer::proccessRequests() const {

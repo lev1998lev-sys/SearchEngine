@@ -5,9 +5,9 @@
       "max_responses": 5
   },
   "files": [
-      "C:\\FilesForCppProjects\\file001.txt",
-      "C:\\FilesForCppProjects\\file002.txt",
-      "C:\\FilesForCppProjects\\file003.txt",
-      "C:\\FilesForCppProjects\\file004.txt"
+      "files_for_test\\file001.txt",
+      "files_for_test\\file002.txt",
+      "files_for_test\\file003.txt",
+      "files_for_test\\file004.txt"
    ]
 }

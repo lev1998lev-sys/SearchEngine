@@ -1,9 +1,7 @@
 #include "SearchService.h"
 
 int main(int argc, char* argv[]) {
-    SearchServer* searchService = new SearchServer();
+    std::unique_ptr<SearchServer> searchService = std::make_unique<SearchServer>();
     searchService->proccessRequests();
-    delete searchService;
-    searchService = nullptr;
     return 0;
 }
