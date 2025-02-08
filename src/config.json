@@ -3,7 +3,7 @@
     "name": "SearchEngine",
     "version": "1.0",
     "max_responses": 5
-  },"files": [
+  }, "files": [
     "files_for_test\\file001.txt",
     "files_for_test\\file002.txt",
     "files_for_test\\file003.txt",

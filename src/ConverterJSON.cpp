@@ -24,9 +24,11 @@ std::vector<std::string> ConverterJSON::getTextDocuments() const {
     readConfigFile.close();
     if (configFile.find("config") == configFile.end()) {
         throw FieldConfigIsMissing();
-    } else if (configFile.find("files") == configFile.end()) {
+    }
+    if (configFile.find("files") == configFile.end()) {
         return std::initializer_list<std::string>({});
-    } else if (!configFile.at("files").is_array()) {
+    }
+    if (!configFile.at("files").is_array()) {
         return std::initializer_list<std::string>({});
     }
     nlohmann::json filesFromConfigFile = configFile.at("files");
@@ -54,7 +56,8 @@ int ConverterJSON::getResponsesLimit() const {
     readConfigFile.close();
     if (configFile.find("config") == configFile.end()) {
         throw FieldConfigIsMissing();
-    } else if (!configFile.at("config").contains("max_responses")) {
+    }
+    if (!configFile.at("config").contains("max_responses")) {
         return 5;
     }
     int maxResponses = configFile.at("config").at("max_responses");
@@ -72,7 +75,8 @@ std::vector<std::string> ConverterJSON::getRequests() const {
     readRequestFile.close();
     if (requestsFile.find("requests") == requestsFile.end()) {
         return std::initializer_list<std::string>({});
-    } else if (!requestsFile.at("requests").is_array()) {
+    }
+    if (!requestsFile.at("requests").is_array()) {
         return std::initializer_list<std::string>({});
     }
     nlohmann::json requestsFromReqFile = requestsFile.at("requests");
@@ -141,7 +145,6 @@ bool ConverterJSON::limitNumberOfWords(std::string& inSentence, int minAmountOfW
 std::string ConverterJSON::getAppName() const {
     std::ifstream readConfigFile("config.json");
     nlohmann::json configFile;
-    std::string tempAppName;
     if (!readConfigFile.is_open() or readConfigFile.peek() != 123) {
         throw ConfigurationFileIsMissing();
     }
@@ -149,9 +152,10 @@ std::string ConverterJSON::getAppName() const {
     readConfigFile.close();
     if (configFile.find("config") == configFile.end()) {
         throw FieldConfigIsMissing();
-    } else if (!configFile.at("config").contains("name")) {
+    }
+    if (!configFile.at("config").contains("name")) {
         return "No name";
     }
-    tempAppName = configFile.at("config").at("name");
+    std::string tempAppName = configFile.at("config").at("name");
     return tempAppName;
 }
