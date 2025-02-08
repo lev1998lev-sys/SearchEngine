@@ -6,25 +6,13 @@ set(CMAKE_CXX_STANDARD 14)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 include(FetchContent)
-FetchContent_Declare(
-        googletest
-        # Specify the commit you depend on and update it regularly.
-        URL https://github.com/google/googletest/archive/5376968f6948923e2411081fd9372e71a59d8e77.zip
-)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
 
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-set(gtest_disable_pthreads on)
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest json)
-
-enable_testing()
 
 add_subdirectory(src)
 
 add_subdirectory(tests)
 
 
-target_link_libraries(SearchEngine PUBLIC nlohmann_json::nlohmann_json gtest_main)
-include(GoogleTest)
+target_link_libraries(SearchEngine PUBLIC nlohmann_json::nlohmann_json)

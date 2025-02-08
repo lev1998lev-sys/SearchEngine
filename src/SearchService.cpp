@@ -66,9 +66,15 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search(const std::vector<s
 SearchServer::SearchServer() {
     currentConverter = std::make_unique<ConverterJSON>();
     currentIndex = std::make_unique<InvertedIndex>();
-    std::vector<std::string> tempInputDocs = currentConverter->getTextDocuments();
-    if (!tempInputDocs.empty()) {
-        currentIndex->updateDocumentBase(tempInputDocs);
+    try {
+        std::vector<std::string> tempInputDocs = currentConverter->getTextDocuments();
+        if (!tempInputDocs.empty()) {
+            currentIndex->updateDocumentBase(tempInputDocs);
+        }
+    } catch (ConfigurationFileIsMissing& fileIsMiss) {
+        std::cerr << fileIsMiss.what() << std::endl;
+    } catch (FieldConfigIsMissing& fieldConfIsMiss) {
+        std::cerr << fieldConfIsMiss.what() << std::endl;
     }
 }
 
@@ -79,10 +85,16 @@ SearchServer::SearchServer(const std::vector<std::string>& inDocuments) {
 }
 
 void SearchServer::proccessRequests() const {
-    std::cout << currentConverter->getAppName();
-    std::vector<std::string> tempInRequests = currentConverter->getRequests();
-    std::vector<std::vector<RelativeIndex>> resultOfRequests = search(tempInRequests);
-    if (!resultOfRequests.empty()) {
-        currentConverter->putAnswers(resultOfRequests);
+    try {
+        std::cout << currentConverter->getAppName();
+        std::vector<std::string> tempInRequests = currentConverter->getRequests();
+        std::vector<std::vector<RelativeIndex>> resultOfRequests = search(tempInRequests);
+        if (!resultOfRequests.empty()) {
+            currentConverter->putAnswers(resultOfRequests);
+        }
+    } catch (ConfigurationFileIsMissing& fileIsMiss) {
+        std::cerr << fileIsMiss.what() << std::endl;
+    } catch (FieldConfigIsMissing& fieldConfIsMiss) {
+        std::cerr << fieldConfIsMiss.what() << std::endl;
     }
 }

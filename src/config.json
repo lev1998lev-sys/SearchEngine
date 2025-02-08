@@ -1,13 +1,12 @@
 {
   "config": {
-      "name": "SearchEngine",
-      "version": "1.0",
-      "max_responses": 5
-  },
-  "files": [
-      "files_for_test\\file001.txt",
-      "files_for_test\\file002.txt",
-      "files_for_test\\file003.txt",
-      "files_for_test\\file004.txt"
-   ]
+    "name": "SearchEngine",
+    "version": "1.0",
+    "max_responses": 5
+  },"files": [
+    "files_for_test\\file001.txt",
+    "files_for_test\\file002.txt",
+    "files_for_test\\file003.txt",
+    "files_for_test\\file004.txt"
+  ]
 }

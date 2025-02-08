@@ -17,14 +17,18 @@ std::vector<std::string> ConverterJSON::getTextDocuments() const {
     std::ifstream readConfigFile("config.json");
     std::vector<std::string> textsFromFiles;
     nlohmann::json configFile;
-    if (!readConfigFile.is_open()) {
+    if (!readConfigFile.is_open() or readConfigFile.peek() != 123) {
         throw ConfigurationFileIsMissing();
     }
     readConfigFile >> configFile;
+    readConfigFile.close();
     if (configFile.find("config") == configFile.end()) {
         throw FieldConfigIsMissing();
+    } else if (configFile.find("files") == configFile.end()) {
+        return std::initializer_list<std::string>({});
+    } else if (!configFile.at("files").is_array()) {
+        return std::initializer_list<std::string>({});
     }
-    readConfigFile.close();
     nlohmann::json filesFromConfigFile = configFile.at("files");
     textsFromFiles.resize(filesFromConfigFile.size());
     for (int i = 0; i < filesFromConfigFile.size(); i++) {
@@ -43,12 +47,14 @@ std::vector<std::string> ConverterJSON::getTextDocuments() const {
 int ConverterJSON::getResponsesLimit() const {
     std::ifstream readConfigFile("config.json");
     nlohmann::json configFile;
-    if (!readConfigFile.is_open()) {
+    if (!readConfigFile.is_open() or readConfigFile.peek() != 123) {
         throw ConfigurationFileIsMissing();
     }
     readConfigFile >> configFile;
     readConfigFile.close();
-    if (!configFile.at("config").contains("max_responses")) {
+    if (configFile.find("config") == configFile.end()) {
+        throw FieldConfigIsMissing();
+    } else if (!configFile.at("config").contains("max_responses")) {
         return 5;
     }
     int maxResponses = configFile.at("config").at("max_responses");
@@ -57,13 +63,18 @@ int ConverterJSON::getResponsesLimit() const {
 
 std::vector<std::string> ConverterJSON::getRequests() const {
     std::ifstream readRequestFile("requests.json");
-    if (!readRequestFile.is_open()) {
+    if (!readRequestFile.is_open() or readRequestFile.peek() != 123) {
         return std::initializer_list<std::string>({});
     }
     std::vector<std::string> requestsFromFile;
     nlohmann::json requestsFile;
     readRequestFile >> requestsFile;
     readRequestFile.close();
+    if (requestsFile.find("requests") == requestsFile.end()) {
+        return std::initializer_list<std::string>({});
+    } else if (!requestsFile.at("requests").is_array()) {
+        return std::initializer_list<std::string>({});
+    }
     nlohmann::json requestsFromReqFile = requestsFile.at("requests");
     for (int i = 0; i < requestsFromReqFile.size(); i++) {
         requestsFromFile.push_back(requestsFromReqFile.at(i));
@@ -101,7 +112,7 @@ void ConverterJSON::putAnswers(std::vector<std::vector<RelativeIndex>>& inAnswer
         }
     }
     std::ofstream outAnswersFile("answers.json");
-    outAnswersFile << answersJson;
+    outAnswersFile << answersJson.dump(4);
     outAnswersFile.close();
 }
 
@@ -131,13 +142,16 @@ std::string ConverterJSON::getAppName() const {
     std::ifstream readConfigFile("config.json");
     nlohmann::json configFile;
     std::string tempAppName;
-    if (!readConfigFile.is_open()) {
+    if (!readConfigFile.is_open() or readConfigFile.peek() != 123) {
         throw ConfigurationFileIsMissing();
     }
     readConfigFile >> configFile;
     readConfigFile.close();
-    if (configFile.at("config").contains("name")) {
-        tempAppName = configFile.at("config").at("name");
+    if (configFile.find("config") == configFile.end()) {
+        throw FieldConfigIsMissing();
+    } else if (!configFile.at("config").contains("name")) {
+        return "No name";
     }
+    tempAppName = configFile.at("config").at("name");
     return tempAppName;
 }
